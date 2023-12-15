@@ -63,7 +63,7 @@ impl ThreadPool {
 
     pub fn install<OP, R>(&self, op: OP) -> R
     where
-        OP: Fn() -> R + Send + 'static,
+        OP: FnOnce() -> R + Send + 'static,
         R: Send + 'static,
     {
         let mut result = None;
@@ -79,20 +79,5 @@ impl ThreadPool {
 impl Drop for ThreadPool {
     fn drop(&mut self) {
         self.registry.terminate();
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    // use super::*;
-
-    #[test]
-    fn test_join() {
-
-    }
-
-    #[test]
-    fn test_thread_pool() {
-
     }
 }
