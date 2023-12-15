@@ -1,1 +1,2 @@
-./mini-dns/target
+mini-dns/target/
+mini-rayon/target/
