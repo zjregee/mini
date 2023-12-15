@@ -94,10 +94,10 @@ fn sort_parallel_in_pool_benchmark(data: &Vec<u32>) -> u128 {
 
 fn main() {
     let epoch = 4;
-    let num = 1000000;
+    let num = 100000000;
     let min = 1;
     let max = 100000000;
-    let mut result_a: Vec<u128> = Vec::with_capacity(epoch);
+    let mut result_a = Vec::with_capacity(epoch);
     let mut result_b = Vec::with_capacity(epoch);
     let mut result_c = Vec::with_capacity(epoch);
     for _ in 0..epoch {
@@ -109,10 +109,10 @@ fn main() {
         result_b.push(sort_parallel_benchmark(&random_numbers));
         result_c.push(sort_parallel_in_pool_benchmark(&random_numbers));
     }
-    let duration_a: u128 = result_a.iter().sum();
-    let duration_b: u128 = result_b.iter().sum();
-    let duration_c: u128 = result_c.iter().sum();
-    println!("sort benchmark average duration: {} ms", duration_a / epoch as u128 / 1000);
-    println!("sort parallel benchmark average duration: {} ms", duration_b / epoch as u128 / 1000);
-    println!("sort in pool benchmark average duration: {} ms", duration_c / epoch as u128 / 1000);
+    let sum_a: u128 = result_a.iter().sum();
+    let sum_b: u128 = result_b.iter().sum();
+    let sum_c: u128 = result_c.iter().sum();
+    println!("sort benchmark average duration: {} ms", sum_a / epoch as u128 / 1000);
+    println!("sort parallel benchmark average duration: {} ms", sum_b / epoch as u128 / 1000);
+    println!("sort in pool benchmark average duration: {} ms", sum_c / epoch as u128 / 1000);
 }

@@ -56,8 +56,10 @@ pub struct ThreadPool {
 
 impl ThreadPool {
     pub fn new() -> ThreadPool {
+        let registry = Registry::new();
+        registry.wait_until_primed();
         ThreadPool {
-            registry: Registry::new(),
+            registry,
         }
     }
 
