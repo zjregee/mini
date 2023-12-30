@@ -7,12 +7,11 @@ namespace paxos {
 class Proposer {
 public:
     Proposer(size_t proposer_count, size_t acceptor_count);
-    void start_propose(Proposal &value);
-    bool start_accept();
-    bool proposed(bool ok, Proposal &last_accept_value);
+    void restart();
+    bool proposed(bool ok);
     bool accepted(bool ok);
-    Proposal &get_proposal();
-    bool is_finished();
+    bool is_propose_finished();
+    bool is_accept_finished();
 
 private:
     size_t proposer_count_;
@@ -21,8 +20,6 @@ private:
     bool is_accept_finished_;
     size_t ok_count_;
     size_t refuse_count_;
-    size_t max_serial_num_;
-    Proposal value_;
 };
 
 }
