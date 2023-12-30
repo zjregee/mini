@@ -1,0 +1,1 @@
+g++ -std=c++11 -o paxos paxos.cpp acceptor.cpp proposer.cpp -lpthread
