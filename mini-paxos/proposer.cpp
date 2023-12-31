@@ -41,6 +41,8 @@ bool Proposer::accepted(bool ok) {
 	}
 	ok_count_++;
 	if (ok_count_ > acceptor_count_ / 2) {
+		ok_count_ = 0;
+		refuse_count_ = 0;
         is_accept_finished_ = true;
     }
 	return true;

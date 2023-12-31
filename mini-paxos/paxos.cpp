@@ -5,13 +5,30 @@
 #include "acceptor.h"
 #include "proposer.h"
 
-const int proposer_count = 10;
-const int acceptor_count = 21;
+const int proposer_count = 5;
+const int acceptor_count = 11;
 
 std::mutex m[acceptor_count];
 paxos::Acceptor a[acceptor_count];
 std::mutex g_m;
 size_t finish_count = 0;
+
+void propose_loop(size_t index);
+
+int main() {
+    for (size_t i = 0; i < proposer_count; i++) {
+        std::thread t(propose_loop, i);
+        t.detach();
+    }
+    while (true) {
+        if (finish_count == proposer_count) {
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+    std::cout << "paxos simulation finished." << std::endl;
+    return 0;
+}
 
 void propose_loop(size_t index) {
     paxos::Proposer proposer(proposer_count, acceptor_count);
@@ -21,10 +38,11 @@ void propose_loop(size_t index) {
     while (true) {
         size_t id[acceptor_count];
         size_t count = 0;
+        paxos::Proposal last_proposal;
         for (size_t i = 0; i < acceptor_count; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100));
             std::unique_lock<std::mutex> lock(m[i]);
-            bool ok = a[i].propose(proposal.serial_num);
+            bool ok = a[i].propose(proposal.serial_num, last_proposal);
             lock.unlock();
             std::this_thread::sleep_for(std::chrono::milliseconds(std::rand() % 100));
             if (!proposer.proposed(ok)) {
@@ -63,19 +81,4 @@ void propose_loop(size_t index) {
         finish_count++;
         break;
     }
-}
-
-int main() {
-    for (size_t i = 0; i < proposer_count; i++) {
-        std::thread t(propose_loop, i);
-        t.detach();
-    }
-    while (true) {
-        if (finish_count == proposer_count) {
-            break;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-    std::cout << "paxos simulation finished." << std::endl;
-    return 0;
 }

@@ -7,11 +7,12 @@ namespace paxos {
 class Acceptor {
 public:
     Acceptor();
-    bool propose(size_t serial_num);
+    bool propose(size_t serial_num, Proposal &last_accept_value);
     bool accept(Proposal &value);
 
 private:
     size_t max_serial_num_;
+    Proposal last_accept_value_;
 };
 
 }
