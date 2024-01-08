@@ -1,5 +1,6 @@
 use std::env;
 
+#[derive(Default)]
 pub struct Config {
     pub dir_path: String,
     pub max_file_size: u32,

@@ -194,6 +194,7 @@ async fn main() {
                 }
             }
             Operation::Close => {
+                db.close();
                 panic!()
             }
         }
