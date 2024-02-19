@@ -12,6 +12,10 @@ auto BPlusTree::IsEmpty() const -> bool {
     return root_page_id_ == INVALID_PAGE_ID;
 }
 
+auto BPlusTree::GetRootPageId() const -> int {
+    return root_page_id_;
+}
+
 auto BPlusTree::Insert(const KeyType &key, const ValueType &value) -> bool {
     if (IsEmpty()) {
         size_t root_page_id;
@@ -30,6 +34,7 @@ auto BPlusTree::Insert(const KeyType &key, const ValueType &value) -> bool {
     while (!cursor_page->IsLeafPage()) {
         auto *internal_page = static_cast<BPlusTreeInternalPage *>(cursor_page);
         int size = internal_page->GetSize();
+        int x = internal_page->GetPageId();
         for (int index = 1; index < size; index++) {
             if (comparator_(key, internal_page->KeyAt(index)) < 0) {
                 size_t next_page_id = internal_page->ValueAt(index - 1);
@@ -47,6 +52,7 @@ auto BPlusTree::Insert(const KeyType &key, const ValueType &value) -> bool {
         }
     }
     auto *leaf_page = static_cast<BPlusTreeLeafPage *>(cursor_page);
+    int y = leaf_page->GetParentPageId();
     int index;
     for (index = 0; index < leaf_page->GetSize(); index++) {
         int cmp = comparator_(key, leaf_page->KeyAt(index));
@@ -139,20 +145,14 @@ void BPlusTree::InsertInternal(KeyType key, size_t left_page_id, size_t right_pa
     parent_page->SetSize(parent_size);
     split_page->SetSize(split_size);
     for (int index = 0; index < split_size; index++) {
-        if (parent_page->ValueAt(index + parent_size) == left_page_id) {
-            auto *raw_page = disk_manager_->FetchPage(left_page_id);
-            auto *page = reinterpret_cast<BPlusTreePage *>(raw_page->GetData());
-            page->SetParentPageId(split_page_id);
-            disk_manager_->UnpinPage(page->GetPageId(), raw_page, true);
-        }
-        if (parent_page->ValueAt(index + parent_size) == right_page_id) {
-            auto *raw_page = disk_manager_->FetchPage(right_page_id);
-            auto *page = reinterpret_cast<BPlusTreePage *>(raw_page->GetData());
-            page->SetParentPageId(split_page_id);
-            disk_manager_->UnpinPage(page->GetPageId(), raw_page, true);
-        }
         split_page->SetKeyAt(index, parent_page->KeyAt(index + parent_size));
         split_page->SetValueAt(index, parent_page->ValueAt(index + parent_size));
+    }
+    for (int index = 0; index < split_size; index++) {
+        auto *raw_page = disk_manager_->FetchPage(split_page->ValueAt(index));
+        auto *page = reinterpret_cast<BPlusTreePage *>(raw_page->GetData());
+        page->SetParentPageId(split_page_id);
+        disk_manager_->UnpinPage(page->GetPageId(), raw_page, true);
     }
     if (parent_page->IsRootPage()) {
         size_t root_page_id;

@@ -13,6 +13,7 @@ class DiskManager {
 public:
     explicit DiskManager(std::string disk_name);
     ~DiskManager();
+    auto GetNextPageId() const -> int;
     auto FetchPage(size_t page_id) -> Page *;
     void UnpinPage(size_t page_id, Page *page, bool is_dirty);
     auto NewPage(size_t *page_id) -> Page *;

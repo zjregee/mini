@@ -13,11 +13,26 @@ class BPlusTree {
 public:
     explicit BPlusTree(DiskManager *disk_manager);
     auto IsEmpty() const -> bool;
+    auto GetRootPageId() const -> int;
     auto Insert(const KeyType &key, const ValueType &value) -> bool;
     void Remove(const KeyType &key);
     auto GetValue(const KeyType &key, ValueType *result) -> bool;
     auto Begin() -> IndexIterator;
     auto Begin(const KeyType &key) -> IndexIterator;
+
+    void PrintInternal(size_t page_id) {
+        auto *raw_cursor_page = disk_manager_->FetchPage(page_id);
+        auto *cursor_page = reinterpret_cast<BPlusTreePage *>(raw_cursor_page->GetData());
+        if (cursor_page->IsLeafPage()) {
+            return;
+        }
+        auto *internal_page = static_cast<BPlusTreeInternalPage *>(cursor_page);
+        std::cout << internal_page->Debug();
+        for (size_t i = 0; i < internal_page->GetSize(); i++) {
+            PrintInternal(internal_page->ValueAt(i));
+        }
+        disk_manager_->UnpinPage(cursor_page->GetPageId(), raw_cursor_page, false);
+    }
 
 private:
     int root_page_id_;

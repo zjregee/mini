@@ -18,6 +18,10 @@ DiskManager::~DiskManager() {
     }
 }
 
+auto DiskManager::GetNextPageId() const -> int {
+    return next_page_id_;
+}
+
 auto DiskManager::FetchPage(size_t page_id) -> Page * {
     Page *page = new Page();
     page->ResetMemory();

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <sstream>
+
 #include "b_plus_tree_page.h"
 
 namespace minibplustree {
@@ -15,6 +18,20 @@ public:
     void SetKeyAt(int index, const KeyType &key);
     auto ValueAt(int index) const -> ValueType;
     void SetValueAt(int index, const ValueType &value);
+
+    auto Debug() const -> std::string {
+        std::ostringstream oss;
+        oss << "BPlusTreeInternalPage:" << std::endl;
+        oss << " page_type: " << static_cast<int>(GetPageType()) << std::endl;
+        oss << " page_id: " << GetPageId() << std::endl;
+        oss << " parent_page_id: " << GetParentPageId() << std::endl;
+        oss << " size: " << GetSize() << std::endl;
+        oss << " max_size: " << GetMaxSize() << std::endl;
+        for (size_t i = 0; i < GetSize(); i++) {
+            oss << " key " << i << ": " << std::string(KeyAt(i).data_, 32) << " value " << i << ": " << ValueAt(i) << std::endl;
+        }
+        return oss.str();
+    }
 
 private:
     MappingType array_[1];

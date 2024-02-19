@@ -53,25 +53,17 @@ auto generate_sequential_data(size_t data_num, size_t key_size) -> std::vector<s
     return sequential_data;
 }
 
-void print_data(minibplustree::BPlusTree *index) {
-
-}
-
 int main(int argc, char* argv[]) {
     size_t data_num;
     size_t key_size = 32;
 
     if (argc < 2) {
-        data_num = 8000;
+        data_num = 10000000;
     } else {
         data_num = std::atoi(argv[1]);
     }
     
-    std::vector<std::pair<std::string, size_t>> data = generate_sequential_data(data_num, key_size);
-
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(data.begin(), data.end(), g);
+    std::vector<std::pair<std::string, size_t>> data = generate_random_data(data_num, key_size);
 
     minibplustree::DiskManager *disk = new minibplustree::DiskManager("sim_disk");
     minibplustree::BPlusTree *index = new minibplustree::BPlusTree(disk);
@@ -80,9 +72,6 @@ int main(int argc, char* argv[]) {
         auto start_time = std::chrono::high_resolution_clock::now();
 
         for (size_t i = 0; i < data_num; i++) {
-            // if (i % 100 == 0) {
-            //     std::cout << "BPlusTree execute " << i << "th insert" << std::endl;
-            // }
             minibplustree::KeyType key = minibplustree::KeyType{};
             std::memcpy(key.data_, data[i].first.c_str(), key_size);
             if (!index->Insert(key, data[i].second)) {
@@ -95,7 +84,7 @@ int main(int argc, char* argv[]) {
         std::cout << "BPlusTree insert duration: " << duration.count() << "ms" << std::endl;
     }
 
-    print_data(index);
+    // index->PrintInternal(index->GetRootPageId());
 
     {
         auto start_time = std::chrono::high_resolution_clock::now();
@@ -118,6 +107,8 @@ int main(int argc, char* argv[]) {
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
         std::cout << "BPlusTree query duration: " << duration.count() << "ms" << std::endl;
     }
+
+    std::cout << "disk usage: " << disk->GetNextPageId() * 4096 / 1024 / 1024 << "MB" << std::endl;
 
     return 0;
 }
