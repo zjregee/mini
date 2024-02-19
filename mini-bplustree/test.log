@@ -1,0 +1,3 @@
+BPlusTree insert duration: 19ms
+BPlusTree execute 6th queury error: can' find key
+BPlusTree query duration: 0ms

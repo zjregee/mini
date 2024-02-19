@@ -2,8 +2,7 @@
 
 namespace minibplustree {
 
-Page::Page(size_t page_id) {
-    page_id_ = page_id;
+Page::Page() {
     data_ = new char[4096];
 }
 

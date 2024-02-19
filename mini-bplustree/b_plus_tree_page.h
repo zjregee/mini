@@ -18,7 +18,7 @@ namespace minibplustree {
 
 static constexpr int INVALID_PAGE_ID = -1;
 
-enum class IndexPageType { INVALID_INDEX_PAGE = 0, LEAF_PAGE, INTERNAL_PAGE };
+enum class IndexPageType { LEAF_PAGE = 0, INTERNAL_PAGE };
 
 class BPlusTreePage {
 public:

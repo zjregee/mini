@@ -7,7 +7,7 @@ auto BPlusTreePage::IsLeafPage() const -> bool {
 }
 
 auto BPlusTreePage::IsRootPage() const -> bool {
-    return parent_page_id_ == static_cast<size_t>(IndexPageType::INVALID_INDEX_PAGE);
+    return parent_page_id_ == INVALID_PAGE_ID;
 }
 
 void BPlusTreePage::SetPageType(IndexPageType page_type) {

@@ -2,6 +2,7 @@
 
 #include "page.h"
 #include "disk_manager.h"
+#include "index_iterator.h"
 #include "b_plus_tree_page.h"
 #include "b_plus_tree_leaf_page.h"
 #include "b_plus_tree_internal_page.h"
@@ -15,6 +16,8 @@ public:
     auto Insert(const KeyType &key, const ValueType &value) -> bool;
     void Remove(const KeyType &key);
     auto GetValue(const KeyType &key, ValueType *result) -> bool;
+    auto Begin() -> IndexIterator;
+    auto Begin(const KeyType &key) -> IndexIterator;
 
 private:
     int root_page_id_;

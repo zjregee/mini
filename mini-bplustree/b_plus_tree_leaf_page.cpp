@@ -8,6 +8,7 @@ void BPlusTreeLeafPage::Init(size_t page_id, size_t parent_id, int max_size) {
     SetMaxSize(max_size);
     SetParentPageId(parent_id);
     SetPageId(page_id);
+    next_page_id_ = INVALID_PAGE_ID;
 }
 
 auto BPlusTreeLeafPage::GetNextPageId() const -> size_t {

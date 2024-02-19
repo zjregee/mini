@@ -6,14 +6,13 @@ namespace minibplustree {
 
 class Page {
 public:
-    explicit Page(size_t page_id);
+    Page();
     ~Page();
-    auto GetData() -> char*;
+    auto GetData() -> char *;
     void ResetMemory();
 
 private:
-    size_t page_id_;
-    char* data_;
+    char *data_;
 };
 
 }
